@@ -9,3 +9,109 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model user{
+  id BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  firstName String @db.VarChar(100)
+  middleName String @db.VarChar(100)
+  lastName String @db.VarChar(100)
+  mobile String @db.VarChar(15)
+  email String @db.VarChar(100) @unique
+  password String @db.VarChar(100)
+  admin Int @db.TinyInt
+  registerAt DateTime @default(now()) @db.Timestamp(0)
+  lastLogin DateTime @default(now()) @db.DateTime(0)
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @default(now()) @db.DateTime(0)
+
+  product product[]
+  cart cart[]
+  order order[]
+}
+
+model product {
+  id BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  firstName String @db.VarChar(100)
+  metaTile String @db.VarChar(100)
+  slug String @db.VarChar(100)
+  summary String @db.VarChar(100)
+  price Int @db.UnsignedInt()
+  discount Int @db.UnsignedInt()
+  userId BigInt @db.UnsignedBigInt
+  publishedAt DateTime @default(now()) @db.Timestamp(0)
+  startsAt DateTime @default(now()) @db.Timestamp(0)
+  endsAt DateTime @default(now()) @db.Timestamp(0)
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) 
+
+  product_meta product_meta?
+  product_review product_review[]
+
+  user user @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+}
+
+model product_meta{
+  id BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  key String @db.VarChar(100)
+  content String @db.VarChar(100)
+  productId BigInt @db.UnsignedBigInt @unique
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0)
+
+  product product @relation(fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+}
+
+
+model product_review{
+  id BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  title String @db.VarChar(100)
+  content String @db.VarChar(100)
+  productId BigInt @db.UnsignedBigInt
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0)
+
+  product product @relation(fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+}
+
+model cart{
+  id BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  title String @db.VarChar(100)
+  sessionId String @db.VarChar(100)
+  token String @db.VarChar(100)
+  status String @db.VarChar(100)
+  firstName String @db.VarChar(100)
+  middleName String @db.VarChar(100)
+  lastName String @db.VarChar(100)
+  mobile String @db.VarChar(15)
+  email String @db.VarChar(100) @unique
+  city String @db.VarChar(100)
+  country String @db.VarChar(100)
+  userId BigInt @db.UnsignedBigInt
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0)
+
+  user user @relation(fields: [userId],references: [id], onDelete: Restrict, onUpdate: Cascade)
+}
+
+model order{
+  id BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  title String @db.VarChar(100)
+  token String @db.VarChar(200)
+  subTotal Int
+  itemDiscount Int
+  tax Int
+  discount Int
+  grandTotal Int
+  firstName String @db.VarChar(100)
+  middleName String @db.VarChar(100)
+  lastName String @db.VarChar(100)
+  mobile String @db.VarChar(15)
+  email String @db.VarChar(100) @unique
+  city String @db.VarChar(100)
+  country String @db.VarChar(100)
+  userId BigInt @db.UnsignedBigInt
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0)
+
+  user user @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+}
